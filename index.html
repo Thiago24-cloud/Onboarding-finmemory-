@@ -1,787 +1,116 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bem-vindo ao FinMemory! 🎉</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        .header {
-            text-align: center;
-            color: white;
-            margin-bottom: 40px;
-        }
-
-        .header h1 {
-            font-size: 36px;
-            margin-bottom: 10px;
-        }
-
-        .header p {
-            font-size: 18px;
-            opacity: 0.95;
-        }
-
-        .progress-dots {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 30px;
-        }
-
-        .dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            transition: all 0.3s ease;
-        }
-
-        .dot.active {
-            background: white;
-            transform: scale(1.3);
-        }
-
-        .card {
-            background: white;
-            border-radius: 20px;
-            padding: 50px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            margin-bottom: 20px;
-        }
-
-        .step {
-            display: none;
-        }
-
-        .step.active {
-            display: block;
-            animation: fadeIn 0.5s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .step-icon {
-            font-size: 80px;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .step-title {
-            font-size: 28px;
-            color: #333;
-            text-align: center;
-            margin-bottom: 15px;
-            font-weight: 700;
-        }
-
-        .step-description {
-            font-size: 16px;
-            color: #666;
-            text-align: center;
-            line-height: 1.6;
-            margin-bottom: 30px;
-        }
-
-        .video-container {
-            position: relative;
-            padding-bottom: 56.25%; /* 16:9 */
-            height: 0;
-            overflow: hidden;
-            background: #f0f0f0;
-            border-radius: 12px;
-            margin: 30px 0;
-        }
-
-        .video-placeholder {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
-        }
-
-        .play-button {
-            width: 80px;
-            height: 80px;
-            background: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            transition: all 0.3s ease;
-        }
-
-        .play-button:hover {
-            transform: scale(1.1);
-        }
-
-        .play-button::after {
-            content: '';
-            width: 0;
-            height: 0;
-            border-left: 25px solid #667eea;
-            border-top: 15px solid transparent;
-            border-bottom: 15px solid transparent;
-            margin-left: 5px;
-        }
-
-        .instruction-list {
-            background: #f8f9ff;
-            border-radius: 12px;
-            padding: 25px;
-            margin: 20px 0;
-        }
-
-        .instruction-item {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-            align-items: flex-start;
-        }
-
-        .instruction-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .instruction-number {
-            background: #667eea;
-            color: white;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            flex-shrink: 0;
-        }
-
-        .instruction-content h4 {
-            color: #333;
-            margin-bottom: 5px;
-        }
-
-        .instruction-content p {
-            color: #666;
-            font-size: 14px;
-            line-height: 1.5;
-        }
-
-        .screenshot {
-            width: 100%;
-            height: 300px;
-            background: #f0f0f0;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 20px 0;
-            border: 2px dashed #ccc;
-        }
-
-        .screenshot-placeholder {
-            text-align: center;
-            color: #999;
-        }
-
-        .tip-box {
-            background: #fff3e0;
-            border-left: 4px solid #ff9800;
-            padding: 15px 20px;
-            border-radius: 8px;
-            margin: 20px 0;
-        }
-
-        .tip-box h4 {
-            color: #e65100;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .tip-box p {
-            color: #555;
-            font-size: 14px;
-        }
-
-        .success-box {
-            background: #e8f5e9;
-            border-left: 4px solid #4caf50;
-            padding: 15px 20px;
-            border-radius: 8px;
-            margin: 20px 0;
-        }
-
-        .success-box h4 {
-            color: #2e7d32;
-            margin-bottom: 8px;
-        }
-
-        .success-box p {
-            color: #555;
-            font-size: 14px;
-        }
-
-        .buttons {
-            display: flex;
-            gap: 15px;
-            margin-top: 30px;
-        }
-
-        .btn {
-            flex: 1;
-            padding: 16px;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .btn-secondary {
-            background: #f0f0f0;
-            color: #333;
-        }
-
-        .btn-secondary:hover {
-            background: #e0e0e0;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-        }
-
-        .completion-screen {
-            text-align: center;
-        }
-
-        .completion-screen .confetti {
-            font-size: 100px;
-            margin-bottom: 20px;
-        }
-
-        .completion-screen h2 {
-            color: #333;
-            font-size: 32px;
-            margin-bottom: 15px;
-        }
-
-        .completion-screen p {
-            color: #666;
-            font-size: 18px;
-            margin-bottom: 30px;
-        }
-
-        .cta-button {
-            display: inline-block;
-            padding: 18px 40px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            text-decoration: none;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 18px;
-            transition: all 0.3s ease;
-        }
-
-        .cta-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-        }
-
-        .quick-links {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin: 30px 0;
-        }
-
-        .quick-link {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            text-align: center;
-            text-decoration: none;
-            color: #333;
-            border: 2px solid #e0e0e0;
-            transition: all 0.3s ease;
-        }
-
-        .quick-link:hover {
-            border-color: #667eea;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
-        }
-
-        .quick-link-icon {
-            font-size: 36px;
-            margin-bottom: 10px;
-        }
-
-        .quick-link-title {
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-
-        .quick-link-desc {
-            font-size: 12px;
-            color: #666;
-        }
-
-        @media (max-width: 600px) {
-            .card {
-                padding: 30px 20px;
-            }
-            
-            .step-title {
-                font-size: 24px;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>🎉 Bem-vindo ao FinMemory!</h1>
-            <p>Em 5 minutos você vai dominar o app e transformar suas finanças</p>
-        </div>
-
-        <div class="progress-dots" id="progressDots">
-            <div class="dot active"></div>
-            <div class="dot"></div>
-            <div class="dot"></div>
-            <div class="dot"></div>
-            <div class="dot"></div>
-        </div>
-
-        <div class="card">
-            <!-- Passo 1: Conectar Gmail -->
-            <div class="step active" data-step="1">
-                <div class="step-icon">📧</div>
-                <h2 class="step-title">Passo 1: Conecte seu Gmail</h2>
-                <p class="step-description">
-                    O FinMemory lê automaticamente seus recibos do email e organiza tudo para você. 
-                    É rápido, seguro e você não precisa fazer nada!
-                </p>
-
-                <div class="video-container">
-                    <div class="video-placeholder">
-                        <div class="play-button"></div>
-                    </div>
-                </div>
-
-                <div class="instruction-list">
-                    <div class="instruction-item">
-                        <div class="instruction-number">1</div>
-                        <div class="instruction-content">
-                            <h4>Clique em "Conectar Gmail"</h4>
-                            <p>No app, você vai ver um botão roxo grande escrito "Conectar Gmail"</p>
-                        </div>
-                    </div>
-                    <div class="instruction-item">
-                        <div class="instruction-number">2</div>
-                        <div class="instruction-content">
-                            <h4>Escolha sua conta do Google</h4>
-                            <p>Uma janela do Google vai abrir. Escolha o email que você usa para compras online</p>
-                        </div>
-                    </div>
-                    <div class="instruction-item">
-                        <div class="instruction-number">3</div>
-                        <div class="instruction-content">
-                            <h4>Autorize o acesso</h4>
-                            <p>Clique em "Permitir" para o FinMemory ler seus recibos. Seus dados são 100% seguros!</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="tip-box">
-                    <h4>💡 Dica Importante</h4>
-                    <p>Use o mesmo email onde você recebe recibos de iFood, Uber, Amazon, Mercado Livre, etc. Quanto mais recibos, melhor o FinMemory funciona!</p>
-                </div>
-            </div>
-
-            <!-- Passo 2: Primeira Sincronização -->
-            <div class="step" data-step="2">
-                <div class="step-icon">🔄</div>
-                <h2 class="step-title">Passo 2: Primeira Sincronização</h2>
-                <p class="step-description">
-                    Agora o FinMemory vai buscar todos os seus recibos dos últimos 30 dias. 
-                    Pode levar de 1 a 3 minutos dependendo da quantidade de emails.
-                </p>
-
-                <div class="screenshot">
-                    <div class="screenshot-placeholder">
-                        <p style="font-size: 48px; margin-bottom: 10px;">⏳</p>
-                        <p><strong>Tela de carregamento</strong></p>
-                        <p style="font-size: 14px; margin-top: 5px;">Processando seus recibos...</p>
-                    </div>
-                </div>
-
-                <div class="instruction-list">
-                    <div class="instruction-item">
-                        <div class="instruction-number">1</div>
-                        <div class="instruction-content">
-                            <h4>Aguarde a sincronização</h4>
-                            <p>Você vai ver uma barra de progresso. Não feche o app!</p>
-                        </div>
-                    </div>
-                    <div class="instruction-item">
-                        <div class="instruction-number">2</div>
-                        <div class="instruction-content">
-                            <h4>Veja a mágica acontecer</h4>
-                            <p>O FinMemory vai mostrar quantos recibos encontrou e quanto você gastou</p>
-                        </div>
-                    </div>
-                    <div class="instruction-item">
-                        <div class="instruction-number">3</div>
-                        <div class="instruction-content">
-                            <h4>Pronto!</h4>
-                            <p>Quando terminar, você será redirecionado para o Dashboard</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="success-box">
-                    <h4>✅ O que acontece agora?</h4>
-                    <p>A partir de agora, toda vez que você receber um recibo por email, o FinMemory vai processar automaticamente. Você não precisa fazer NADA!</p>
-                </div>
-            </div>
-
-            <!-- Passo 3: Entendendo o Dashboard -->
-            <div class="step" data-step="3">
-                <div class="step-icon">📊</div>
-                <h2 class="step-title">Passo 3: Seu Dashboard</h2>
-                <p class="step-description">
-                    O Dashboard é o coração do FinMemory. Aqui você vê tudo sobre seus gastos de forma visual e simples.
-                </p>
-
-                <div class="screenshot">
-                    <div class="screenshot-placeholder">
-                        <p style="font-size: 48px; margin-bottom: 10px;">📈</p>
-                        <p><strong>Dashboard Principal</strong></p>
-                        <p style="font-size: 14px; margin-top: 5px;">Visão geral dos seus gastos</p>
-                    </div>
-                </div>
-
-                <div class="instruction-list">
-                    <div class="instruction-item">
-                        <div class="instruction-number">📅</div>
-                        <div class="instruction-content">
-                            <h4>Gastos do Mês</h4>
-                            <p>No topo, você vê quanto gastou este mês e comparação com o mês anterior</p>
-                        </div>
-                    </div>
-                    <div class="instruction-item">
-                        <div class="instruction-number">🏷️</div>
-                        <div class="instruction-content">
-                            <h4>Gastos por Categoria</h4>
-                            <p>Veja onde seu dinheiro está indo: alimentação, transporte, compras, etc.</p>
-                        </div>
-                    </div>
-                    <div class="instruction-item">
-                        <div class="instruction-number">📋</div>
-                        <div class="instruction-content">
-                            <h4>Últimas Compras</h4>
-                            <p>Lista com todas as suas compras recentes, organizadas por data</p>
-                        </div>
-                    </div>
-                    <div class="instruction-item">
-                        <div class="instruction-number">📈</div>
-                        <div class="instruction-content">
-                            <h4>Gráficos</h4>
-                            <p>Visualize seus gastos ao longo do tempo de forma bonita e fácil</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="tip-box">
-                    <h4>💡 Explore à vontade!</h4>
-                    <p>Clique nas categorias, gráficos e compras para ver mais detalhes. Você não vai quebrar nada! 😄</p>
-                </div>
-            </div>
-
-            <!-- Passo 4: Adicionando Gastos Manuais -->
-            <div class="step" data-step="4">
-                <div class="step-icon">✍️</div>
-                <h2 class="step-title">Passo 4: Adicionar Gastos Manuais</h2>
-                <p class="step-description">
-                    Comprou algo em dinheiro ou não recebeu recibo por email? 
-                    Você pode adicionar manualmente em segundos!
-                </p>
-
-                <div class="screenshot">
-                    <div class="screenshot-placeholder">
-                        <p style="font-size: 48px; margin-bottom: 10px;">➕</p>
-                        <p><strong>Adicionar Gasto</strong></p>
-                        <p style="font-size: 14px; margin-top: 5px;">Formulário simples e rápido</p>
-                    </div>
-                </div>
-
-                <div class="instruction-list">
-                    <div class="instruction-item">
-                        <div class="instruction-number">1</div>
-                        <div class="instruction-content">
-                            <h4>Clique no botão "+"</h4>
-                            <p>Geralmente fica no canto inferior direito do app</p>
-                        </div>
-                    </div>
-                    <div class="instruction-item">
-                        <div class="instruction-number">2</div>
-                        <div class="instruction-content">
-                            <h4>Preencha os dados básicos</h4>
-                            <p>Valor, descrição (ex: "Almoço"), categoria e data. Simples assim!</p>
-                        </div>
-                    </div>
-                    <div class="instruction-item">
-                        <div class="instruction-number">3</div>
-                        <div class="instruction-content">
-                            <h4>Salve</h4>
-                            <p>Clique em "Salvar" e pronto! O gasto já aparece no seu Dashboard</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="tip-box">
-                    <h4>💡 Use com moderação</h4>
-                    <p>A ideia do FinMemory é ser automático! Só adicione manual se realmente não tiver recibo por email.</p>
-                </div>
-            </div>
-
-            <!-- Passo 5: Waze dos Preços (Fase 3) -->
-            <div class="step" data-step="5">
-                <div class="step-icon">🗺️</div>
-                <h2 class="step-title">Passo 5: Waze dos Preços</h2>
-                <p class="step-description">
-                    Nossa funcionalidade exclusiva! Veja onde os produtos estão mais baratos 
-                    e ajude outras pessoas compartilhando seus achados.
-                </p>
-
-                <div class="screenshot">
-                    <div class="screenshot-placeholder">
-                        <p style="font-size: 48px; margin-bottom: 10px;">🗺️</p>
-                        <p><strong>Mapa de Preços</strong></p>
-                        <p style="font-size: 14px; margin-top: 5px;">Encontre as melhores ofertas</p>
-                    </div>
-                </div>
-
-                <div class="instruction-list">
-                    <div class="instruction-item">
-                        <div class="instruction-number">1</div>
-                        <div class="instruction-content">
-                            <h4>Ative a localização</h4>
-                            <p>Permita que o app use sua localização para mostrar ofertas perto de você</p>
-                        </div>
-                    </div>
-                    <div class="instruction-item">
-                        <div class="instruction-number">2</div>
-                        <div class="instruction-content">
-                            <h4>Busque produtos</h4>
-                            <p>Digite o que você quer comprar e veja onde está mais barato</p>
-                        </div>
-                    </div>
-                    <div class="instruction-item">
-                        <div class="instruction-number">3</div>
-                        <div class="instruction-content">
-                            <h4>Compartilhe preços</h4>
-                            <p>Achou uma boa oferta? Compartilhe anonimamente para ajudar a comunidade!</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="success-box">
-                    <h4>🎉 Quanto mais pessoas usarem, melhor fica!</h4>
-                    <p>O Waze dos Preços funciona igual ao Waze do trânsito: quanto mais gente colaborar, mais preciso e útil fica para todos!</p>
-                </div>
-            </div>
-
-            <!-- Tela de Conclusão -->
-            <div class="step" data-step="6">
-                <div class="completion-screen">
-                    <div class="confetti">🎊</div>
-                    <h2>Você está pronto!</h2>
-                    <p>Agora você sabe tudo que precisa para usar o FinMemory e transformar suas finanças.</p>
-
-                    <div class="quick-links">
-                        <a href="#" class="quick-link">
-                            <div class="quick-link-icon">📱</div>
-                            <div class="quick-link-title">Ir para o App</div>
-                            <div class="quick-link-desc">Começar a usar agora</div>
-                        </a>
-                        <a href="#" class="quick-link">
-                            <div class="quick-link-icon">📚</div>
-                            <div class="quick-link-title">Central de Ajuda</div>
-                            <div class="quick-link-desc">Dúvidas e tutoriais</div>
-                        </a>
-                        <a href="#" class="quick-link">
-                            <div class="quick-link-icon">💬</div>
-                            <div class="quick-link-title">Suporte</div>
-                            <div class="quick-link-desc">Fale conosco</div>
-                        </a>
-                        <a href="#" class="quick-link">
-                            <div class="quick-link-icon">🎥</div>
-                            <div class="quick-link-title">Vídeos</div>
-                            <div class="quick-link-desc">Tutoriais em vídeo</div>
-                        </a>
-                    </div>
-
-                    <a href="#" class="cta-button">Começar a usar o FinMemory</a>
-
-                    <div style="margin-top: 30px; padding-top: 30px; border-top: 2px solid #f0f0f0;">
-                        <p style="color: #999; font-size: 14px;">
-                            Precisa rever algum passo? 
-                            <a href="#" onclick="resetTutorial()" style="color: #667eea; text-decoration: none; font-weight: 600;">Clique aqui para recomeçar</a>
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="buttons" id="navigationButtons">
-            <button class="btn btn-secondary" id="prevBtn" onclick="previousStep()" style="display: none;">
-                Voltar
-            </button>
-            <button class="btn btn-primary" id="nextBtn" onclick="nextStep()">
-                Próximo Passo
-            </button>
-        </div>
-    </div>
-
-    <script>
-        let currentStep = 1;
-        const totalSteps = 6;
-
-        function updateProgress() {
-            const dots = document.querySelectorAll('.dot');
-            dots.forEach((dot, index) => {
-                if (index < currentStep) {
-                    dot.classList.add('active');
-                } else {
-                    dot.classList.remove('active');
-                }
-            });
-
-            // Atualiza botões
-            const prevBtn = document.getElementById('prevBtn');
-            const nextBtn = document.getElementById('nextBtn');
-
-            if (currentStep === 1) {
-                prevBtn.style.display = 'none';
-            } else {
-                prevBtn.style.display = 'block';
-            }
-
-            if (currentStep === totalSteps) {
-                nextBtn.style.display = 'none';
-            } else {
-                nextBtn.textContent = currentStep === totalSteps - 1 ? 'Finalizar' : 'Próximo Passo';
-            }
-        }
-
-        function nextStep() {
-            if (currentStep >= totalSteps) return;
-
-            // Esconde step atual
-            document.querySelector(`[data-step="${currentStep}"]`).classList.remove('active');
-
-            // Incrementa
-            currentStep++;
-
-            // Mostra próximo step
-            document.querySelector(`[data-step="${currentStep}"]`).classList.add('active');
-
-            // Atualiza progresso
-            updateProgress();
-
-            // Scroll para o topo
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-
-            // Salva progresso (localStorage)
-            localStorage.setItem('finmemory_onboarding_step', currentStep);
-        }
-
-        function previousStep() {
-            if (currentStep <= 1) return;
-
-            // Esconde step atual
-            document.querySelector(`[data-step="${currentStep}"]`).classList.remove('active');
-
-            // Decrementa
-            currentStep--;
-
-            // Mostra step anterior
-            document.querySelector(`[data-step="${currentStep}"]`).classList.add('active');
-
-            // Atualiza progresso
-            updateProgress();
-
-            // Scroll para o topo
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function resetTutorial() {
-            currentStep = 1;
-            document.querySelectorAll('.step').forEach(step => step.classList.remove('active'));
-            document.querySelector('[data-step="1"]').classList.add('active');
-            updateProgress();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            localStorage.removeItem('finmemory_onboarding_step');
-        }
-
-        // Carrega progresso salvo
-        window.addEventListener('load', function() {
-            const savedStep = localStorage.getItem('finmemory_onboarding_step');
-            if (savedStep) {
-                currentStep = parseInt(savedStep);
-                document.querySelectorAll('.step').forEach(step => step.classList.remove('active'));
-                document.querySelector(`[data-step="${currentStep}"]`).classList.add('active');
-                updateProgress();
-            }
-        });
-
-        // Marca onboarding como completo
-        function completeOnboarding() {
-            localStorage.setItem('finmemory_onboarding_completed', 'true');
-            // Redireciona para o app
-            // window.location.href = '/dashboard';
-        }
-
-        // Inicializa
-        updateProgress();
-    </script>
-</body>
-</html>
+-- ============================================
+-- TABELA PARA RASTREAR PROGRESSO DO ONBOARDING
+-- ============================================
+
+-- Criar tabela
+CREATE TABLE IF NOT EXISTS onboarding_progress (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    
+    -- Identificação do usuário (usamos email ou session_id)
+    email TEXT,
+    session_id TEXT,
+    
+    -- Progresso
+    current_step INTEGER DEFAULT 1,
+    completed BOOLEAN DEFAULT FALSE,
+    
+    -- Passos completados (array de números dos passos)
+    steps_completed INTEGER[] DEFAULT ARRAY[]::INTEGER[],
+    
+    -- Tempo gasto (em segundos)
+    time_spent INTEGER DEFAULT 0,
+    
+    -- Quando começou e terminou
+    started_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    completed_at TIMESTAMP WITH TIME ZONE,
+    
+    -- Última atualização
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    
+    -- Metadados
+    device_type TEXT, -- 'mobile' ou 'desktop'
+    browser TEXT,
+    referrer TEXT,
+    
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Criar índices para performance
+CREATE INDEX IF NOT EXISTS idx_onboarding_email ON onboarding_progress(email);
+CREATE INDEX IF NOT EXISTS idx_onboarding_session ON onboarding_progress(session_id);
+CREATE INDEX IF NOT EXISTS idx_onboarding_completed ON onboarding_progress(completed);
+CREATE INDEX IF NOT EXISTS idx_onboarding_created_at ON onboarding_progress(created_at DESC);
+
+-- Habilitar Row Level Security (RLS)
+ALTER TABLE onboarding_progress ENABLE ROW LEVEL SECURITY;
+
+-- Política: Permitir INSERT público (qualquer um pode registrar progresso)
+CREATE POLICY "Permitir INSERT público"
+ON onboarding_progress
+FOR INSERT
+TO public
+WITH CHECK (true);
+
+-- Política: Permitir UPDATE público (qualquer um pode atualizar seu progresso)
+CREATE POLICY "Permitir UPDATE público"
+ON onboarding_progress
+FOR UPDATE
+TO public
+USING (true)
+WITH CHECK (true);
+
+-- Política: Permitir SELECT público (qualquer um pode ver dados)
+-- NOTA: Em produção, você pode querer restringir isso
+CREATE POLICY "Permitir SELECT público"
+ON onboarding_progress
+FOR SELECT
+TO public
+USING (true);
+
+-- ============================================
+-- COMENTÁRIOS
+-- ============================================
+
+COMMENT ON TABLE onboarding_progress IS 'Rastreia o progresso dos usuários no onboarding do FinMemory';
+COMMENT ON COLUMN onboarding_progress.email IS 'Email do usuário (se fornecido)';
+COMMENT ON COLUMN onboarding_progress.session_id IS 'ID único da sessão para usuários anônimos';
+COMMENT ON COLUMN onboarding_progress.current_step IS 'Passo atual do onboarding (1-6)';
+COMMENT ON COLUMN onboarding_progress.completed IS 'Se o usuário completou todo o onboarding';
+COMMENT ON COLUMN onboarding_progress.steps_completed IS 'Array com números dos passos completados';
+COMMENT ON COLUMN onboarding_progress.time_spent IS 'Tempo total gasto no onboarding (segundos)';
+
+-- ============================================
+-- QUERIES ÚTEIS PARA ANÁLISE
+-- ============================================
+
+-- Ver progresso geral
+-- SELECT 
+--     COUNT(*) as total_iniciados,
+--     COUNT(*) FILTER (WHERE completed = true) as total_completados,
+--     ROUND(100.0 * COUNT(*) FILTER (WHERE completed = true) / COUNT(*), 2) as taxa_conclusao
+-- FROM onboarding_progress;
+
+-- Ver em qual passo as pessoas desistem
+-- SELECT 
+--     current_step,
+--     COUNT(*) as pessoas_neste_passo,
+--     COUNT(*) FILTER (WHERE completed = false) as desistiram
+-- FROM onboarding_progress
+-- GROUP BY current_step
+-- ORDER BY current_step;
+
+-- Ver tempo médio para completar
+-- SELECT 
+--     AVG(time_spent) as tempo_medio_segundos,
+--     AVG(time_spent) / 60 as tempo_medio_minutos
+-- FROM onboarding_progress
+-- WHERE completed = true;
+
+-- Ver taxa de conclusão por dispositivo
+-- SELECT 
+--     device_type,
+--     COUNT(*) as total,
+--     COUNT(*) FILTER (WHERE completed = true) as completados,
+--     ROUND(100.0 * COUNT(*) FILTER (WHERE completed = true) / COUNT(*), 2) as taxa_conclusao
+-- FROM onboarding_progress
+-- GROUP BY device_type;
